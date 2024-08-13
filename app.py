@@ -40,14 +40,12 @@ demo_metadata = [
 asset_store.metadata_providers.append(InProcAssetMetadataProvider(demo_metadata))
 
 DESCRIPTION = """\
-Tiếng trống trường rộn rã vang lên, báo hiệu một năm học mới lại bắt đầu. Tôi đứng trong hàng, lòng 
-tràn đầy háo hức. Nhìn lên lá cờ Tổ quốc tung bay phấp phới trên sân trường, tôi chợt nhớ lại những kỷ 
-niệm đẹp của năm học trước. Cái ngày tôi lần đầu tiên bước vào ngôi trường này, cảm giác vừa lạ lẫm vừa hồi hộp.
- Nhưng rồi, nhờ có thầy cô tận tình chỉ bảo, bạn bè luôn bên cạnh, tôi đã dần thích nghi và yêu quý ngôi trường này.
-   Năm nay, tôi lên lớp 5, là anh cả của trường. Tôi hứa sẽ cố gắng học tập thật tốt, rèn luyện thật nhiều để trở thành một học sinh giỏi,
-     một con ngoan trò giỏi.
+# SeamlessM4T
 
-
+[SeamlessM4T](https://github.com/facebookresearch/seamless_communication) is designed to provide high-quality
+translation, allowing people from different linguistic communities to communicate effortlessly through speech and text.
+This unified model enables multiple tasks like Speech-to-Speech (S2ST), Speech-to-Text (S2TT), Text-to-Speech (T2ST)
+translation and more, without relying on multiple separate models.
 """
 
 CACHE_EXAMPLES = os.getenv("CACHE_EXAMPLES") == "1" and torch.cuda.is_available()
@@ -78,7 +76,7 @@ def preprocess_audio(input_audio: str) -> None:
     max_length = int(MAX_INPUT_AUDIO_LENGTH * AUDIO_SAMPLE_RATE)
     if new_arr.shape[1] > max_length:
         new_arr = new_arr[:, :max_length]
-        gr.Warning(f"Âm thanh đầu vào quá dài. Chỉ có phần đầu {MAX_INPUT_AUDIO_LENGTH} seconds is used.")
+        gr.Warning(f"Input audio is too long. Only the first {MAX_INPUT_AUDIO_LENGTH} seconds is used.")
     torchaudio.save(input_audio, new_arr, sample_rate=int(AUDIO_SAMPLE_RATE))
 
 
@@ -267,22 +265,22 @@ with gr.Blocks() as demo_t2st:
     gr.Examples(
         examples=[
             [
-                "Chieu Ngan B Primary and Secondary School",
+                "My favorite animal is the elephant.",
                 "English",
                 "French",
             ],
             [
-                "Chieu Ngan B Primary and Secondary School",
+                "My favorite animal is the elephant.",
                 "English",
                 "Mandarin Chinese",
             ],
             [
-                "The children are very diligent in studying and attentive to their teachers.",
+                "Meta AI's Seamless M4T model is democratising spoken communication across language barriers",
                 "English",
                 "Hindi",
             ],
             [
-                "The children are very diligent in studying and attentive to their teachers.",
+                "Meta AI's Seamless M4T model is democratising spoken communication across language barriers",
                 "English",
                 "Spanish",
             ],
@@ -325,22 +323,22 @@ with gr.Blocks() as demo_t2tt:
     gr.Examples(
         examples=[
             [
-                "Chieu Ngan B Primary and Secondary School",
+                "My favorite animal is the elephant.",
                 "English",
                 "French",
             ],
             [
-                "Chieu Ngan B Primary and Secondary School",
+                "My favorite animal is the elephant.",
                 "English",
                 "Mandarin Chinese",
             ],
             [
-                "The children are very diligent in studying and attentive to their teachers.",
+                "Meta AI's Seamless M4T model is democratising spoken communication across language barriers",
                 "English",
                 "Hindi",
             ],
             [
-                "The children are very diligent in studying and attentive to their teachers.",
+                "Meta AI's Seamless M4T model is democratising spoken communication across language barriers",
                 "English",
                 "Spanish",
             ],
@@ -364,7 +362,7 @@ with gr.Blocks() as demo_asr:
     with gr.Row():
         with gr.Column():
             with gr.Group():
-                input_audio = gr.Audio(label="Âm thanh nguồn", type="filepath")
+                input_audio = gr.Audio(label="Input speech", type="filepath")
                 target_language = gr.Dropdown(
                     label="Target language",
                     choices=ASR_TARGET_LANGUAGE_NAMES,
