@@ -37,7 +37,7 @@ demo_metadata = [
 asset_store.metadata_providers.append(InProcAssetMetadataProvider(demo_metadata))
 
 DESCRIPTION = """\
-# PHẦM MỀM DỊCH TIẾNG TỰ ĐỘNG
+# PHẦM MỀM DỊCH TIẾNG TỰ ĐỘNG (TRƯỜNG TH-THCS CHIỀNG NGẦN B)
 
 cho phép mọi người từ các cộng đồng ngôn ngữ khác nhau giao tiếp dễ dàng thông qua lời nói và văn bản.
 Mô hình hợp nhất này cho phép thực hiện nhiều tác vụ như Chuyển giọng nói thành giọng nói (S2ST),
