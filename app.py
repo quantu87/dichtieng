@@ -37,12 +37,11 @@ demo_metadata = [
 asset_store.metadata_providers.append(InProcAssetMetadataProvider(demo_metadata))
 
 DESCRIPTION = """\
-# SeamlessM4T v2
+# PHẦM MỀM DỊCH TIẾNG TỰ ĐỘNG
 
-[SeamlessM4T](https://github.com/facebookresearch/seamless_communication) is designed to provide high-quality
-translation, allowing people from different linguistic communities to communicate effortlessly through speech and text.
-This unified model enables multiple tasks like Speech-to-Speech (S2ST), Speech-to-Text (S2TT), Text-to-Speech (T2ST)
-translation and more, without relying on multiple separate models.
+cho phép mọi người từ các cộng đồng ngôn ngữ khác nhau giao tiếp dễ dàng thông qua lời nói và văn bản.
+Mô hình hợp nhất này cho phép thực hiện nhiều tác vụ như Chuyển giọng nói thành giọng nói (S2ST),
+Chuyển giọng nói thành văn bản (S2TT), Chuyển văn bản thành giọng nói (T2ST).
 """
 
 AUDIO_SAMPLE_RATE = 16000.0
