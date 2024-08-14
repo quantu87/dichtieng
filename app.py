@@ -21,36 +21,29 @@ from lang_list import (
     TEXT_SOURCE_LANGUAGE_NAMES,
 )
 
-CHECKPOINTS_PATH = pathlib.Path(os.getenv("CHECKPOINTS_PATH", "/home/user/app/models"))
-if not CHECKPOINTS_PATH.exists():
-   snapshot_download(repo_id="meta-private/M4Tv2", repo_type="model", local_dir=CHECKPOINTS_PATH)
 asset_store.env_resolvers.clear()
 asset_store.env_resolvers.append(lambda: "demo")
 demo_metadata = [
     {
         "name": "seamlessM4T_v2_large@demo",
-        "checkpoint": f"file://{CHECKPOINTS_PATH}/seamlessM4T_v2_large.pt",
-        "char_tokenizer": f"file://{CHECKPOINTS_PATH}/spm_char_lang38_tc.model",
+        "checkpoint": f"/content/models/seamlessM4T_v2_large.pt",
+        "char_tokenizer": f"/content/models/spm_char_lang38_tc.model",
     },
     {
         "name": "vocoder_v2@demo",
-        "checkpoint": f"file://{CHECKPOINTS_PATH}/vocoder_v2.pt",
+        "checkpoint": f"/content/models/vocoder_v2.pt",
     },
 ]
 asset_store.metadata_providers.append(InProcAssetMetadataProvider(demo_metadata))
 
 DESCRIPTION = """\
-Tiếng trống trường rộn rã vang lên, báo hiệu một năm học mới lại bắt đầu. Tôi đứng trong hàng, lòng 
-tràn đầy háo hức. Nhìn lên lá cờ Tổ quốc tung bay phấp phới trên sân trường, tôi chợt nhớ lại những kỷ 
-niệm đẹp của năm học trước. Cái ngày tôi lần đầu tiên bước vào ngôi trường này, cảm giác vừa lạ lẫm vừa hồi hộp.
- Nhưng rồi, nhờ có thầy cô tận tình chỉ bảo, bạn bè luôn bên cạnh, tôi đã dần thích nghi và yêu quý ngôi trường này.
-   Năm nay, tôi lên lớp 5, là anh cả của trường. Tôi hứa sẽ cố gắng học tập thật tốt, rèn luyện thật nhiều để trở thành một học sinh giỏi,
-     một con ngoan trò giỏi.
+# SeamlessM4T v2
 
-
+[SeamlessM4T](https://github.com/facebookresearch/seamless_communication) is designed to provide high-quality
+translation, allowing people from different linguistic communities to communicate effortlessly through speech and text.
+This unified model enables multiple tasks like Speech-to-Speech (S2ST), Speech-to-Text (S2TT), Text-to-Speech (T2ST)
+translation and more, without relying on multiple separate models.
 """
-
-CACHE_EXAMPLES = os.getenv("CACHE_EXAMPLES") == "1" and torch.cuda.is_available()
 
 AUDIO_SAMPLE_RATE = 16000.0
 MAX_INPUT_AUDIO_LENGTH = 60  # in seconds
@@ -78,7 +71,7 @@ def preprocess_audio(input_audio: str) -> None:
     max_length = int(MAX_INPUT_AUDIO_LENGTH * AUDIO_SAMPLE_RATE)
     if new_arr.shape[1] > max_length:
         new_arr = new_arr[:, :max_length]
-        gr.Warning(f"Âm thanh đầu vào quá dài. Chỉ có phần đầu {MAX_INPUT_AUDIO_LENGTH} seconds is used.")
+        gr.Warning(f"Input audio is too long. Only the first {MAX_INPUT_AUDIO_LENGTH} seconds is used.")
     torchaudio.save(input_audio, new_arr, sample_rate=int(AUDIO_SAMPLE_RATE))
 
 
@@ -186,7 +179,6 @@ with gr.Blocks() as demo_s2st:
         inputs=[input_audio, source_language, target_language],
         outputs=[output_audio, output_text],
         fn=run_s2st,
-        cache_examples=CACHE_EXAMPLES,
         api_name=False,
     )
 
@@ -226,7 +218,6 @@ with gr.Blocks() as demo_s2tt:
         inputs=[input_audio, source_language, target_language],
         outputs=output_text,
         fn=run_s2tt,
-        cache_examples=CACHE_EXAMPLES,
         api_name=False,
     )
 
@@ -267,22 +258,22 @@ with gr.Blocks() as demo_t2st:
     gr.Examples(
         examples=[
             [
-                "Chieu Ngan B Primary and Secondary School",
+                "My favorite animal is the elephant.",
                 "English",
                 "French",
             ],
             [
-                "Chieu Ngan B Primary and Secondary School",
+                "My favorite animal is the elephant.",
                 "English",
                 "Mandarin Chinese",
             ],
             [
-                "The children are very diligent in studying and attentive to their teachers.",
+                "Meta AI's Seamless M4T model is democratising spoken communication across language barriers",
                 "English",
                 "Hindi",
             ],
             [
-                "The children are very diligent in studying and attentive to their teachers.",
+                "Meta AI's Seamless M4T model is democratising spoken communication across language barriers",
                 "English",
                 "Spanish",
             ],
@@ -290,7 +281,6 @@ with gr.Blocks() as demo_t2st:
         inputs=[input_text, source_language, target_language],
         outputs=[output_audio, output_text],
         fn=run_t2st,
-        cache_examples=CACHE_EXAMPLES,
         api_name=False,
     )
 
@@ -325,22 +315,22 @@ with gr.Blocks() as demo_t2tt:
     gr.Examples(
         examples=[
             [
-                "Chieu Ngan B Primary and Secondary School",
+                "My favorite animal is the elephant.",
                 "English",
                 "French",
             ],
             [
-                "Chieu Ngan B Primary and Secondary School",
+                "My favorite animal is the elephant.",
                 "English",
                 "Mandarin Chinese",
             ],
             [
-                "The children are very diligent in studying and attentive to their teachers.",
+                "Meta AI's Seamless M4T model is democratising spoken communication across language barriers",
                 "English",
                 "Hindi",
             ],
             [
-                "The children are very diligent in studying and attentive to their teachers.",
+                "Meta AI's Seamless M4T model is democratising spoken communication across language barriers",
                 "English",
                 "Spanish",
             ],
@@ -348,7 +338,6 @@ with gr.Blocks() as demo_t2tt:
         inputs=[input_text, source_language, target_language],
         outputs=output_text,
         fn=run_t2tt,
-        cache_examples=CACHE_EXAMPLES,
         api_name=False,
     )
 
@@ -364,7 +353,7 @@ with gr.Blocks() as demo_asr:
     with gr.Row():
         with gr.Column():
             with gr.Group():
-                input_audio = gr.Audio(label="Âm thanh nguồn", type="filepath")
+                input_audio = gr.Audio(label="Input speech", type="filepath")
                 target_language = gr.Dropdown(
                     label="Target language",
                     choices=ASR_TARGET_LANGUAGE_NAMES,
@@ -382,7 +371,6 @@ with gr.Blocks() as demo_asr:
         inputs=[input_audio, target_language],
         outputs=output_text,
         fn=run_asr,
-        cache_examples=CACHE_EXAMPLES,
         api_name=False,
     )
 
@@ -396,11 +384,6 @@ with gr.Blocks() as demo_asr:
 
 with gr.Blocks(css="style.css") as demo:
     gr.Markdown(DESCRIPTION)
-    gr.DuplicateButton(
-        value="Duplicate Space for private use",
-        elem_id="duplicate-button",
-        visible=os.getenv("SHOW_DUPLICATE_BUTTON") == "1",
-    )
 
     with gr.Tabs():
         with gr.Tab(label="S2ST"):
@@ -414,6 +397,5 @@ with gr.Blocks(css="style.css") as demo:
         with gr.Tab(label="ASR"):
             demo_asr.render()
 
-
 if __name__ == "__main__":
-    demo.queue(max_size=50).launch()
+    demo.queue(max_size=50).launch(share=True)
